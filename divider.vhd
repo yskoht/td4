@@ -3,10 +3,10 @@ use ieee.std_logic_1164.all;
 
 entity divider is
 	port (
-		clock_in : in  std_logic;
-		n_reset  : in  std_logic;
-		clock_sel: in  std_logic;
-		clock_out: out std_logic
+		clock_in  : in  std_logic;
+		n_reset_in: in  std_logic;
+		clock_sel : in  std_logic;
+		clock_out : out std_logic
 	);
 end divider;
 
@@ -40,7 +40,7 @@ begin
 		)
 		port map (
 			clock    => clock_in,
-			n_reset  => n_reset,
+			n_reset  => n_reset_in,
 			n_load   => '1',
 			data_in  => (others => '0'),
 			data_out => open,
@@ -54,7 +54,7 @@ begin
 		)
 		port map (
 			clock    => clock_in,
-			n_reset  => n_reset,
+			n_reset  => n_reset_in,
 			n_load   => '1',
 			data_in  => (others => '0'),
 			data_out => open,

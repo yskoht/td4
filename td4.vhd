@@ -5,7 +5,7 @@ entity td4 is
 	port (
 		clock_in  : in std_logic;
 		clock_sel : in std_logic;
-		n_reset   : in std_logic;
+		n_reset_in: in std_logic;
 		iport_data: in std_logic_vector(3 downto 0);
 		oport_data: out std_logic_vector(3 downto 0)
 	);
@@ -61,17 +61,40 @@ architecture rtl of td4 is
 
 	component divider is
 		port (
-			clock_in : in  std_logic;
-			n_reset  : in  std_logic;
-			clock_sel: in  std_logic;
-			clock_out: out std_logic
+			clock_in  : in  std_logic;
+			n_reset_in: in  std_logic;
+			clock_sel : in  std_logic;
+			clock_out : out std_logic
+		);
+	end component;
+	
+	component d_ff
+		generic (
+			N: integer
+		);
+		port (
+			clock   : in  std_logic;
+			n_reset : in  std_logic;
+			n_load  : in  std_logic;
+			data_in : in  std_logic_vector(N-1 downto 0);
+			data_out: out std_logic_vector(N-1 downto 0)
+		);
+	end component;
+	
+	component reset
+		port (
+			clock_in   : in  std_logic;
+			n_reset_in : in  std_logic;
+			clock      : in  std_logic;
+			n_reset_out: out std_logic
 		);
 	end component;
 
 	constant N            : integer := 4;
 	constant ROM_BIT_WIDTH: integer := 8;
 	
-	signal clock : std_logic;
+	signal clock  : std_logic;
+	signal n_reset: std_logic;
 	
 	signal address  : std_logic_vector(N-1 downto 0);
 	signal rom_data : std_logic_vector(ROM_BIT_WIDTH-1 downto 0);
@@ -80,7 +103,8 @@ architecture rtl of td4 is
 	signal register_data : std_logic_vector(N-1 downto 0);
 	signal sel           : std_logic_vector(1 downto 0);
 	signal alu_data      : std_logic_vector(N-1 downto 0);
-	signal alu_carry     : std_logic;
+	signal alu_carry     : std_logic_vector(0 downto 0);
+	signal alu_carry_ff  : std_logic_vector(0 downto 0);
 	
 begin
 	u_rom: rom
@@ -114,22 +138,42 @@ begin
 			data_in_a  => register_data,
 			data_in_b  => rom_data(N-1 downto 0),
 			data_out   => alu_data,
-			data_out_c => alu_carry
+			data_out_c => alu_carry(0)
 		);
 
 	u_decoder: decoder
 		port map (
 			op     => rom_data(ROM_BIT_WIDTH-1 downto N),
-			cflag  => alu_carry,
+			cflag  => alu_carry_ff(0),
 			sel    => sel,
 			n_load => n_load
 		);
 
 	u_divider: divider
 		port map (
-			clock_in  => clock_in,
-			n_reset   => n_reset,
-			clock_sel => clock_sel,
-			clock_out => clock
+			clock_in    => clock_in,
+			n_reset_in  => n_reset_in,
+			clock_sel   => clock_sel,
+			clock_out   => clock
 		);
+		
+	u_d_ff: d_ff
+		generic map (
+			N => 1
+		)
+		port map (
+			clock    => clock,
+			n_reset  => n_reset,
+			n_load   => '0',
+			data_in  => alu_carry,
+			data_out => alu_carry_ff
+		);
+		
+	u_reset: reset
+		port map (
+			clock_in    => clock_in,
+			n_reset_in  => n_reset_in,
+			clock       => clock,
+			n_reset_out => n_reset
+		);	
 end rtl;
