@@ -8,19 +8,13 @@ entity registers is
 	port (
 		clock        : in  std_logic;
 		n_reset      : in  std_logic;
-		n_load_a     : in  std_logic;
-		n_load_b     : in  std_logic;
-		n_load_c     : in  std_logic;
-		n_load_d     : in  std_logic;
-		data_in_a    : in  std_logic_vector(N-1 downto 0);
-		data_in_b    : in  std_logic_vector(N-1 downto 0);
-		data_in_c    : in  std_logic_vector(N-1 downto 0);
-		data_in_d    : in  std_logic_vector(N-1 downto 0);
+		n_load       : in  std_logic_vector(N-1 downto 0);
+		data_in      : in  std_logic_vector(N-1 downto 0);
 		sel          : in  std_logic_vector(1 downto 0);
-		input_data   : in  std_logic_vector(N-1 downto 0);
+		iport_data   : in  std_logic_vector(N-1 downto 0);
 		register_data: out std_logic_vector(N-1 downto 0);
 		counter_data : out std_logic_vector(N-1 downto 0);
-		output_data  : out std_logic_vector(N-1 downto 0)
+		oport_data   : out std_logic_vector(N-1 downto 0)
 	);
 end registers;
 
@@ -80,8 +74,8 @@ begin
 		port map (
 			clock    => clock,
 			n_reset  => n_reset,
-			n_load   => n_load_a,
-			data_in  => data_in_a,
+			n_load   => n_load(0),
+			data_in  => data_in,
 			data_out => data_out_a
 		);
 
@@ -92,8 +86,8 @@ begin
 		port map (
 			clock    => clock,
 			n_reset  => n_reset,
-			n_load   => n_load_b,
-			data_in  => data_in_b,
+			n_load   => n_load(1),
+			data_in  => data_in,
 			data_out => data_out_b
 		);
 
@@ -104,9 +98,9 @@ begin
 		port map (
 			clock    => clock,
 			n_reset  => n_reset,
-			n_load   => n_load_c,
-			data_in  => data_in_c,
-			data_out => output_data
+			n_load   => n_load(2),
+			data_in  => data_in,
+			data_out => oport_data
 		);
 
 	u_reg_d: counter
@@ -117,8 +111,8 @@ begin
 		port map (
 			clock    => clock,
 			n_reset  => n_reset,
-			n_load   => n_load_d,
-			data_in  => data_in_d,
+			n_load   => n_load(3),
+			data_in  => data_in,
 			data_out => counter_data,
 			carry    => open
 		);
@@ -131,7 +125,7 @@ begin
 			clock    => clock,
 			data_ch0 => data_out_a,
 			data_ch1 => data_out_b,
-			data_ch2 => input_data,
+			data_ch2 => iport_data,
 			data_ch3 => (others => '0'),
 			sel      => sel,
 			data_out => register_data

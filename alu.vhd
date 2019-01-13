@@ -19,7 +19,7 @@ architecture rtl of alu is
 	signal data : std_logic_vector(N downto 0);
 
 begin
-	data <= data_in_a + data_in_b;
+	data <= ('0' & data_in_a) + ('0' & data_in_b);
 	data_out_c <= data(N);
 	data_out <= data(N-1 downto 0);
 end rtl;
