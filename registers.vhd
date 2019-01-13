@@ -41,14 +41,16 @@ architecture rtl of registers is
 
 	component counter
 		generic (
-			N: integer
+			N: integer;
+			M: integer
 		);
 		port (
 			clock   : in  std_logic;
 			n_reset : in  std_logic;
 			n_load  : in  std_logic;
 			data_in : in  std_logic_vector(N-1 downto 0);
-			data_out: out std_logic_vector(N-1 downto 0)
+			data_out: out std_logic_vector(N-1 downto 0);
+			carry   : out std_logic
 		);
 	end component;
 
@@ -109,14 +111,16 @@ begin
 
 	u_reg_d: counter
 		generic map (
-			N => N
+			N => N,
+			M => 2 ** N
 		)
 		port map (
 			clock    => clock,
 			n_reset  => n_reset,
 			n_load   => n_load_d,
 			data_in  => data_in_d,
-			data_out => counter_data
+			data_out => counter_data,
+			carry    => open
 		);
 		
 	u_selector: selector_4ch
