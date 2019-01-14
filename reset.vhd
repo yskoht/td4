@@ -14,7 +14,7 @@ end reset;
 
 architecture rtl of reset is
 	signal n_reset_intr : std_logic;
-	signal count : std_logic_vector(1 downto 0);
+	signal flag : std_logic;
 	
 begin
 	n_reset_out <= n_reset_in and n_reset_intr;
@@ -23,12 +23,12 @@ begin
 		if (clock_in'event and clock_in = '1') then
 			if (n_reset_in = '0') then
 				n_reset_intr <= '0';
-				count <= "00";
+				flag <= '0';
 			elsif (clock = '1') then
-				if (count = "11") then
+				if (flag = '1') then
 					n_reset_intr <= '1';
 				else
-					count <= count + '1';
+					flag <= '1';
 				end if;
 			end if;
 		end if;
