@@ -20,6 +20,7 @@ architecture rtl of divider is
 		port (
 			clock   : in  std_logic;
 			n_reset : in  std_logic;
+			enable  : in  std_logic;
 			n_load  : in  std_logic;
 			data_in : in  std_logic_vector(N-1 downto 0);
 			data_out: out std_logic_vector(N-1 downto 0);
@@ -37,10 +38,13 @@ begin
 		generic map (
 			N => 26,
 			M => 50000000
+			--N => 1,  -- for simulation
+			--M => 2   -- for simulation
 		)
 		port map (
 			clock    => clock_in,
 			n_reset  => n_reset_in,
+			enable   => '1',
 			n_load   => '1',
 			data_in  => (others => '0'),
 			data_out => open,
@@ -55,6 +59,7 @@ begin
 		port map (
 			clock    => clock_in,
 			n_reset  => n_reset_in,
+			enable   => '1',
 			n_load   => '1',
 			data_in  => (others => '0'),
 			data_out => open,

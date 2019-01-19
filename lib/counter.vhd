@@ -11,6 +11,7 @@ entity counter is
 	port (
 		clock   : in  std_logic;
 		n_reset : in  std_logic;
+		enable  : in  std_logic;
 		n_load  : in  std_logic;
 		data_in : in  std_logic_vector(N-1 downto 0);
 		data_out: out std_logic_vector(N-1 downto 0);
@@ -30,15 +31,17 @@ begin
 			if (n_reset = '0') then
 				count <= (others => '0');
 				carry <= '0';
-			elsif (n_load = '0') then
-				count <= data_in;
-				carry <= '0';
-			elsif (count = conv_std_logic_vector(M-1, N)) then
-				count <= (others => '0');
-				carry <= '1';
-			else
-				count <= count + 1;
-				carry <= '0';
+			elsif (enable = '1') then
+				if (n_load = '0') then
+					count <= data_in;
+					carry <= '0';
+				elsif (count = conv_std_logic_vector(M-1, N)) then
+					count <= (others => '0');
+					carry <= '1';
+				else
+					count <= count + 1;
+					carry <= '0';
+				end if;
 			end if;
 		end if;
 	end process;

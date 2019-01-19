@@ -8,6 +8,7 @@ entity registers is
 	port (
 		clock        : in  std_logic;
 		n_reset      : in  std_logic;
+		enable       : in  std_logic;
 		n_load       : in  std_logic_vector(N-1 downto 0);
 		data_in      : in  std_logic_vector(N-1 downto 0);
 		sel          : in  std_logic_vector(1 downto 0);
@@ -41,6 +42,7 @@ architecture rtl of registers is
 		port (
 			clock   : in  std_logic;
 			n_reset : in  std_logic;
+			enable  : in  std_logic;
 			n_load  : in  std_logic;
 			data_in : in  std_logic_vector(N-1 downto 0);
 			data_out: out std_logic_vector(N-1 downto 0);
@@ -66,7 +68,17 @@ architecture rtl of registers is
 	signal data_out_a: std_logic_vector(N-1 downto 0);
 	signal data_out_b: std_logic_vector(N-1 downto 0);
 	
+	signal n_load0: std_logic;
+	signal n_load1: std_logic;
+	signal n_load2: std_logic;
+	signal n_load3: std_logic;
+
 begin
+	n_load0 <= not (enable and (not n_load(0)));
+	n_load1 <= not (enable and (not n_load(1)));
+	n_load2 <= not (enable and (not n_load(2)));
+	n_load3 <= not (enable and (not n_load(3)));
+
 	u_reg_a: d_ff
 		generic map (
 			N => N
@@ -74,7 +86,7 @@ begin
 		port map (
 			clock    => clock,
 			n_reset  => n_reset,
-			n_load   => n_load(0),
+			n_load   => n_load0,
 			data_in  => data_in,
 			data_out => data_out_a
 		);
@@ -86,7 +98,7 @@ begin
 		port map (
 			clock    => clock,
 			n_reset  => n_reset,
-			n_load   => n_load(1),
+			n_load   => n_load1,
 			data_in  => data_in,
 			data_out => data_out_b
 		);
@@ -98,7 +110,7 @@ begin
 		port map (
 			clock    => clock,
 			n_reset  => n_reset,
-			n_load   => n_load(2),
+			n_load   => n_load2,
 			data_in  => data_in,
 			data_out => oport_data
 		);
@@ -111,7 +123,8 @@ begin
 		port map (
 			clock    => clock,
 			n_reset  => n_reset,
-			n_load   => n_load(3),
+			enable   => enable,
+			n_load   => n_load3,
 			data_in  => data_in,
 			data_out => counter_data,
 			carry    => open

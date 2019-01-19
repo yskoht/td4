@@ -28,6 +28,7 @@ architecture rtl of td4_core is
 		port (
 			clock        : in  std_logic;
 			n_reset      : in  std_logic;
+			enable       : in  std_logic;
 			n_load       : in  std_logic_vector(N-1 downto 0);
 			data_in      : in  std_logic_vector(N-1 downto 0);
 			sel          : in  std_logic_vector(1 downto 0);
@@ -65,6 +66,22 @@ architecture rtl of td4_core is
 			n_reset_in: in  std_logic;
 			clock_sel : in  std_logic;
 			clock_out : out std_logic
+		);
+	end component;
+
+	component counter
+		generic (
+			N: integer;
+			M: integer
+		);
+		port (
+			clock   : in  std_logic;
+			n_reset : in  std_logic;
+			enable  : in  std_logic;
+			n_load  : in  std_logic;
+			data_in : in  std_logic_vector(N-1 downto 0);
+			data_out: out std_logic_vector(N-1 downto 0);
+			carry   : out std_logic
 		);
 	end component;
 	
@@ -106,7 +123,12 @@ architecture rtl of td4_core is
 	signal alu_carry     : std_logic_vector(0 downto 0);
 	signal alu_carry_ff  : std_logic_vector(0 downto 0);
 	
+	signal enable : std_logic;
+	signal not_enable : std_logic;
+
 begin
+	not_enable <= not enable;
+
 	u_rom: rom
 		port map (
 			address => address,
@@ -121,6 +143,7 @@ begin
 		port map (
 			clock         => clock,
 			n_reset       => n_reset,
+			enable        => enable,
 			n_load        => n_load,
 			data_in       => alu_data,
 			sel           => sel,
@@ -157,6 +180,21 @@ begin
 			clock_out   => clock
 		);
 		
+	u_counter: counter
+		generic map (
+			N => 1,
+			M => 2
+		)
+		port map (
+			clock    => clock,
+			n_reset  => n_reset,
+			enable  => '1',
+			n_load   => '1',
+			data_in  => (others => '0'),
+			data_out => open,
+			carry    => enable
+		);
+
 	u_d_ff: d_ff
 		generic map (
 			N => 1
@@ -164,11 +202,11 @@ begin
 		port map (
 			clock    => clock,
 			n_reset  => n_reset,
-			n_load   => '0',
+			n_load   => not_enable,
 			data_in  => alu_carry,
 			data_out => alu_carry_ff
 		);
-		
+
 	u_reset: reset
 		port map (
 			clock_in    => clock_in,

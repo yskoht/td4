@@ -74,6 +74,8 @@ set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
 set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
 set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
+set_location_assignment PIN_F1 -to n_reset_in
+set_global_assignment -name VHDL_FILE rom/async_rom.vhd
 set_global_assignment -name VHDL_FILE bench/td4_bench.vhd
 set_global_assignment -name VHDL_FILE registers.vhd
 set_global_assignment -name VHDL_FILE lib/selector_4ch.vhd
@@ -85,6 +87,7 @@ set_global_assignment -name VHDL_FILE divider.vhd
 set_global_assignment -name VHDL_FILE lib/d_ff.vhd
 set_global_assignment -name VHDL_FILE lib/counter.vhd
 set_global_assignment -name VHDL_FILE reset.vhd
-set_location_assignment PIN_F1 -to n_reset_in
 set_global_assignment -name VHDL_FILE td4.vhd
+set_global_assignment -name VHDL_FILE td4_core.vhd
+set_global_assignment -name VHDL_FILE td4_core_async_rom.vhd
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

@@ -27,6 +27,7 @@ architecture rtl of td4_core_async_rom is
 		port (
 			clock        : in  std_logic;
 			n_reset      : in  std_logic;
+			enable       : in  std_logic;
 			n_load       : in  std_logic_vector(N-1 downto 0);
 			data_in      : in  std_logic_vector(N-1 downto 0);
 			sel          : in  std_logic_vector(1 downto 0);
@@ -118,6 +119,7 @@ begin
 		)
 		port map (
 			clock         => clock,
+			enable        => '1',
 			n_reset       => n_reset,
 			n_load        => n_load,
 			data_in       => alu_data,

@@ -34,21 +34,21 @@ architecture rtl of td4 is
 	end component;
 
 begin
---	u_td4_core: td4_core
---		port map (
---			clock_in   => clock_in,
---			clock_sel  => clock_sel,
---			n_reset_in => n_reset_in,
---			iport_data => iport_data,
---			oport_data => oport_data
---		);
-
-	u_td4_core: td4_core_async_rom
+	u_td4_core: td4_core
 		port map (
 			clock_in   => clock_in,
 			clock_sel  => clock_sel,
 			n_reset_in => n_reset_in,
 			iport_data => iport_data,
 			oport_data => oport_data
-		);	
+		);
+
+--	u_td4_core: td4_core_async_rom
+--		port map (
+--			clock_in   => clock_in,
+--			clock_sel  => clock_sel,
+--			n_reset_in => n_reset_in,
+--			iport_data => iport_data,
+--			oport_data => oport_data
+--		);	
 end rtl;
